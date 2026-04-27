@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Auto QA Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:Segoe UI; }
+
+body {
+  background: linear-gradient(135deg,#0f172a,#020617);
+  color: white;
+  min-height:100vh;
+}
+
+/* HEADER */
+header {
+  padding:20px;
+  font-size:24px;
+  font-weight:bold;
+  text-align:center;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+}
+
+/* INPUT */
+.container {
+  text-align:center;
+  margin-top:30px;
+}
+
+input {
+  width:320px;
+  padding:12px;
+  border-radius:8px;
+  border:none;
+  outline:none;
+}
+
+button {
+  padding:12px 20px;
+  border:none;
+  border-radius:8px;
+  background: linear-gradient(90deg,#3b82f6,#06b6d4);
+  color:white;
+  cursor:pointer;
+  margin-left:10px;
+  transition:0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* GRID */
+.grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+  gap:20px;
+  padding:30px;
+}
+
+/* CARD */
+.card {
+  background: rgba(255,255,255,0.05);
+  padding:20px;
+  border-radius:15px;
+  backdrop-filter: blur(12px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  transition:0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* STATUS */
+.pass { color:#22c55e; font-weight:bold; }
+.fail { color:#ef4444; font-weight:bold; }
+
+/* LIST */
+li {
+  margin:8px 0;
+  text-align:left;
+}
+
+/* LOADER */
+.loader {
+  display:none;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header> Auto QA Monitoring Dashboard</header>
+
+<div class="container">
+  <input id="url" placeholder="https://example.com">
+  <button onclick="test()">Run Test</button>
+  <div class="loader" id="loader">⏳ Testing...</div>
+</div>
+
+<div class="grid">
+
+  <div class="card">
+    <h3> Latest Result</h3>
+    <p id="result">No test yet</p>
+  </div>
+
+  <div class="card">
+    <h3> Response Time Trend</h3>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <div class="card">
+    <h3> Last 5 Tests</h3>
+    <ul id="history"></ul>
+  </div>
+
+</div>
+
+<script>
+let chart;
+
+async function test(){
+  const url = document.getElementById("url").value;
+  const loader = document.getElementById("loader");
+  loader.style.display = "block";
+
+  try {
+    const res = await fetch("http://localhost:5000/api/test-url",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({url})
+    });
+
+    const d = await res.json();
+
+    document.getElementById("result").innerHTML =
+      `<span class="${d.status==='PASS'?'pass':'fail'}">${d.status}</span><br>
+       ⏱ ${d.responseTime} ms<br>
+       🌐 ${d.url}`;
+
+  } catch {
+    document.getElementById("result").innerHTML =
+      `<span class="fail">ERROR</span>`;
+  }
+
+  loader.style.display = "none";
+  load();
+}
+
+async function load(){
+  const res = await fetch("http://localhost:5000/api/results");
+  const data = await res.json();
+
+  const last5 = data.slice(0,5);
+
+  // HISTORY
+  document.getElementById("history").innerHTML =
+    last5.map(i=>`
+      <li class="${i.status==='PASS'?'pass':'fail'}">
+        ${i.url}<br>⏱ ${i.responseTime} ms
+      </li>`).join("");
+
+  // GRAPH
+  if(chart) chart.destroy();
+
+  chart = new Chart(document.getElementById("chart"),{
+    type:"line",
+    data:{
+      labels:last5.map(i=>i.url),
+      datasets:[{
+        label:"Response Time (ms)",
+        data:last5.map(i=>i.responseTime),
+        borderWidth:3,
+        tension:0.4
+      }]
+    },
+    options:{
+      plugins:{legend:{labels:{color:"white"}}},
+      scales:{
+        x:{ticks:{color:"white"}},
+        y:{ticks:{color:"white"}}
+      }
+    }
+  });
+}
+
+load();
+</script>
+
+</body>
+</html>
