@@ -1,62 +1,144 @@
 # Auto QA Reporter
 
-Auto QA Reporter is a web-based application designed to simulate automated quality assurance reporting. The application demonstrates backend integration, containerization, and CI/CD pipeline implementation using modern DevOps tools.
+Auto QA Reporter is a web-based application designed to simulate automated quality assurance reporting workflows. The project demonstrates how modern DevOps practices can be applied to build, containerize, and deploy a full-stack application with CI/CD automation.
+
+It showcases integration between backend services, database storage, container orchestration, and pipeline automation using industry-standard tools.
+
+---
 
 ## Features
 
-* Web interface for QA reporting
-* Backend server using Node.js
-* MongoDB integration
-* Containerized using Docker
-* Multi-container orchestration using Docker Compose
-* CI/CD pipeline using Jenkins
+- Web interface for QA report submission and viewing  
+- Backend API built with Node.js and Express  
+- MongoDB integration for storing QA reports  
+- Containerized application using Docker  
+- Multi-container setup using Docker Compose  
+- CI/CD pipeline implemented using Jenkins  
+- Automated build and deployment workflow  
+
+---
 
 ## Tech Stack
 
-* Node.js
-* Docker
-* Docker Compose
-* Jenkins
-* MongoDB
+- Node.js  
+- Express.js  
+- MongoDB  
+- Docker  
+- Docker Compose  
+- Jenkins  
+- HTML, CSS, JavaScript  
+
+---
+
+## Architecture Overview
+
+The application follows a containerized DevOps workflow:
+
+1. User interacts with the frontend UI  
+2. Backend API processes QA data  
+3. Data is stored in MongoDB  
+4. Docker manages application containers  
+5. Jenkins automates build and deployment pipeline  
+
+---
 
 ## Project Structure
 
-* server.js – Backend server
-* Dockerfile – Application container configuration
-* docker-compose.yml – Multi-container setup
-* Jenkinsfile – CI/CD pipeline definition
-* Dockerfile.jenkins – Custom Jenkins environment with Docker support
+auto-qa-reporter/
 
-## CI/CD Pipeline
+├── node_modules/  
+├── Dockerfile  
+├── docker-compose.yml  
+├── Jenkinsfile  
+├── server.js  
+├── package.json  
+├── index.html  
+└── README.md  
 
-The Jenkins pipeline performs the following steps:
+---
 
-1. Clones the repository from GitHub
-2. Builds the Docker image
-3. Runs the application using Docker Compose
+## Setup Instructions
 
-This setup simulates a real-world DevOps workflow for continuous integration and deployment.
+### 1. Clone Repository
 
-## How to Run
+git clone https://github.com/laksh1107/auto-qa-reporter.git  
+cd auto-qa-reporter  
 
-### Using Docker Compose
+---
 
-```
-docker-compose up --build
-```
+### 2. Install Dependencies
 
-### Access Application
+npm install  
 
-```
-http://localhost:5000
-```
+---
 
-### Jenkins (Local Setup)
+### 3. Run Application Locally
 
-```
-http://localhost:8080
-```
+node server.js  
 
-## Notes
+Access application at:  
+http://localhost:3000  
 
-This project demonstrates a complete DevOps workflow including containerization and CI/CD automation using Jenkins.
+---
+
+## Docker Setup
+
+Build image:
+
+docker build -t qa-reporter .  
+
+Run container:
+
+docker run -p 3000:3000 qa-reporter  
+
+---
+
+## Docker Compose (Recommended)
+
+docker-compose up --build  
+
+This will start:
+
+- Backend service  
+- MongoDB database  
+
+---
+
+## Jenkins CI/CD Pipeline
+
+The Jenkins pipeline automates:
+
+- Pulling code from GitHub  
+- Installing dependencies  
+- Building Docker image  
+- Running containers  
+
+Pipeline configuration is defined in:
+
+Jenkinsfile  
+
+---
+
+## Use Case
+
+This project simulates a real QA reporting system where:
+
+- Test results are submitted via UI  
+- Reports are stored and retrieved dynamically  
+- Deployment is automated through CI/CD  
+- Containers ensure consistency across environments  
+
+---
+
+## Future Enhancements
+
+- Add authentication and user roles  
+- Implement real test case integrations  
+- Add reporting dashboard with analytics  
+- Integrate cloud deployment (AWS ECS / EC2)  
+
+---
+
+## Author
+
+Lakshya Jain
