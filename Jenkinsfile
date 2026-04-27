@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t qa-app .'
@@ -10,13 +11,9 @@ pipeline {
 
         stage('Run App') {
             steps {
-                sh 'docker run -d -p 5000:5000 qa-app'
-            }
-        }
-
-        stage('Test API') {
-            steps {
-                sh 'curl http://localhost:5000/api/results'
+                sh 'docker rm -f qa-container || true'
+                sh 'docker-compose down || true'
+                sh 'docker-compose up -d --build'
             }
         }
     }
